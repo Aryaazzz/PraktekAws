@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKPD: Manajemen Server VPS AWS - Fase 1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #f4f5f7;
+            --bg-card: #ffffff;
+            --bg-meta: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent-amber: #f59e0b;
+            --accent-dark: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            padding: 48px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Header LKPD */
+        .header {
+            border-bottom: 3px solid var(--accent-amber);
+            padding-bottom: 14px;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .badge {
+            background-color: var(--accent-dark);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 6px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        /* Identitas Siswa */
+        .meta-box {
+            background-color: var(--bg-meta);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-dark);
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-bottom: 36px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 36px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .meta-label {
+            font-weight: 600;
+            width: 90px;
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+
+        .meta-input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 1px dashed #cbd5e1;
+            background: transparent;
+            padding: 4px 8px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .meta-input:focus {
+            border-bottom-color: var(--accent-amber);
+            background-color: #ffffff;
+        }
+
+        /* Bagian Fase 1 */
+        .phase-header {
+            margin-bottom: 24px;
+        }
+
+        .phase-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-amber);
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .phase-instruction {
+            font-size: 14.5px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* Grid Jawaban */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--accent-dark);
+            border-radius: 6px;
+            padding: 22px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background-color: #f1f5f9;
+            color: var(--text-secondary);
+        }
+
+        .card-answer {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: justify;
+            line-height: 1.65;
+            padding-bottom: 12px;
+            border-bottom: 1px dotted var(--border-color);
+        }
+
+        .card-summary {
+            margin-top: 12px;
+            font-size: 12.5px;
+            color: var(--text-primary);
+            background-color: var(--bg-meta);
+            padding: 8px 12px;
+            border-radius: 4px;
+            border-left: 3px solid var(--accent-amber);
+        }
+
+        /* Tabel Ringkasan Perbandingan */
+        .comparison-section {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .comparison-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--bg-meta);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .btn-print {
+            background-color: var(--accent-dark);
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-print:hover {
+            background-color: #334155;
+        }
+
+        @media (max-width: 680px) {
+            .container {
+                padding: 24px;
+            }
+            .meta-box, .grid-cards {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+                padding: 10px;
+                max-width: 100%;
+            }
+            .btn-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>LKPD: Manajemen Server VPS AWS</h1>
+            <span class="badge">Fase 1 Selesai</span>
+        </div>
+
+        <!-- Form Identitas (Bisa diketik langsung di browser) -->
+        <div class="meta-box">
+            <div class="meta-item">
+                <span class="meta-label">Nama</span>
+                <span>:</span>
+                <input type="text" class="meta-input" placeholder="Ketik nama Anda di sini...">
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Tanggal</span>
+                <span>:</span>
+                <input type="text" class="meta-input" value="15 Oktober 2026">
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Kelas</span>
+                <span>:</span>
+                <input type="text" class="meta-input" placeholder="Contoh: XI PPLG 2 / XI RPL 2">
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Instruktur</span>
+                <span>:</span>
+                <input type="text" class="meta-input" placeholder="Ketik nama instruktur...">
+            </div>
+        </div>
+
+        <!-- Fase 1: Pertanyaan & Jawaban -->
+        <div class="phase-header">
+            <h2 class="phase-title">Fase 1: Pengenalan Konsep VPS &amp; Cloud</h2>
+            <p class="phase-instruction">
+                <strong>Pertanyaan / Instruksi:</strong> Jelaskan secara singkat pemahaman Anda mengenai perbedaan layanan berikut dengan mengisi kotak yang tersedia.
+            </p>
+        </div>
+
+        <div class="grid-cards">
+            <!-- Kotak 1: Shared Hosting -->
+            <div class="card">
+                <div>
+                    <div class="card-header">
+                        <h3 class="card-title">Shared Hosting</h3>
+                        <span class="card-tag">Berbagi Resource</span>
+                    </div>
+                    <p class="card-answer">
+                        Layanan hosting di mana satu server fisik dipakai bersama oleh banyak pengguna sekaligus. Seluruh pengguna berbagi sumber daya (CPU, RAM, dan penyimpanan) yang sama. Biaya sewanya paling terjangkau dan pengelolaannya mudah (umumnya menggunakan cPanel), namun performanya terbatas, tidak memiliki akses <em>root</em>, dan rentan melambat jika ada pengguna lain yang mengalami lonjakan trafik.
+                    </p>
+                </div>
+                <div class="card-summary">
+                    <strong>Cocok untuk:</strong> Website portofolio, blog pribadi, atau web profil skala kecil.
+                </div>
+            </div>
+
+            <!-- Kotak 2: Dedicated Server -->
+            <div class="card">
+                <div>
+                    <div class="card-header">
+                        <h3 class="card-title">Dedicated Server</h3>
+                        <span class="card-tag">1 Server Fisik Penuh</span>
+                    </div>
+                    <p class="card-answer">
+                        Layanan penyewaan satu unit server fisik secara utuh dan eksklusif untuk satu pengguna/organisasi tanpa dibagi dengan pihak lain. Pengguna memegang kendali penuh (akses <em>root</em>/administrator) atas perangkat keras, sistem operasi, serta keamanan. Menawarkan performa dan stabilitas tertinggi, namun biayanya paling mahal dan membutuhkan keahlian teknis manajemen server.
+                    </p>
+                </div>
+                <div class="card-summary">
+                    <strong>Cocok untuk:</strong> Sistem enterprise, game server besar, atau aplikasi trafik sangat tinggi.
+                </div>
+            </div>
+
+            <!-- Kotak 3: Amazon Lightsail -->
+            <div class="card">
+                <div>
+                    <div class="card-header">
+                        <h3 class="card-title">Amazon Lightsail</h3>
+                        <span class="card-tag">Simple Cloud VPS</span>
+                    </div>
+                    <p class="card-answer">
+                        Layanan <em>Virtual Private Server</em> (VPS) dari AWS yang dirancang praktis dan ramah pemula. Lightsail menggabungkan komputasi (VM), penyimpanan SSD, dan kuota transfer data ke dalam satu paket harga bulanan yang tetap (<em>fixed price</em>). Dilengkapi antarmuka yang sederhana serta <em>blueprint</em> instan (seperti WordPress, Node.js, atau LAMP) untuk mempercepat proses <em>deployment</em>.
+                    </p>
+                </div>
+                <div class="card-summary">
+                    <strong>Cocok untuk:</strong> Proyek skala kecil-menengah, <em>staging/testing</em>, dan aplikasi web standar.
+                </div>
+            </div>
+
+            <!-- Kotak 4: Amazon EC2 -->
+            <div class="card">
+                <div>
+                    <div class="card-header">
+                        <h3 class="card-title">Amazon EC2</h3>
+                        <span class="card-tag">Scalable Cloud IaaS</span>
+                    </div>
+                    <p class="card-answer">
+                        Layanan komputasi <em>cloud</em> (<em>Elastic Compute Cloud</em>) tingkat lanjut dari AWS yang sangat fleksibel dan dapat diskalakan (<em>scalable</em>). Menggunakan skema biaya sesuai pemakaian (<em>pay-as-you-go</em>) dan mendukung kustomisasi mendalam pada jaringan (VPC), keamanan (Security Group), pilihan spesifikasi ribuan tipe <em>instance</em>, hingga fitur <em>Auto Scaling</em> dan <em>Load Balancing</em>.
+                    </p>
+                </div>
+                <div class="card-summary">
+                    <strong>Cocok untuk:</strong> Aplikasi produksi skala besar, SaaS, <em>microservices</em>, dan arsitektur kompleks.
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabel Ringkasan Perbandingan Tambahan -->
+        <div class="comparison-section">
+            <div class="comparison-title">Ringkasan Perbandingan Cepat</div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Layanan</th>
+                            <th>Alokasi Resource</th>
+                            <th>Kontrol / Akses Root</th>
+                            <th>Skema Biaya</th>
+                            <th>Tingkat Kemudahan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Shared Hosting</strong></td>
+                            <td>Berbagi bersama pengguna lain</td>
+                            <td>Tidak ada (Terbatas panel)</td>
+                            <td>Tetap &amp; Sangat Murah</td>
+                            <td>Sangat Mudah (Pemula)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dedicated Server</strong></td>
+                            <td>100% Fisik Eksklusif</td>
+                            <td>Penuh (Full Root &amp; Hardware)</td>
+                            <td>Tetap &amp; Mahal</td>
+                            <td>Sulit (Perlu SysAdmin)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amazon Lightsail</strong></td>
+                            <td>Virtual (VPS) Terisolasi</td>
+                            <td>Penuh (Root SSH)</td>
+                            <td>Paket Bulanan Tetap</td>
+                            <td>Mudah (Antarmuka Simpel)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amazon EC2</strong></td>
+                            <td>Virtual (Cloud) Elastis</td>
+                            <td>Penuh (Root SSH + VPC)</td>
+                            <td>Pay-as-you-go (Sesuai Pakai)</td>
+                            <td>Menengah - Lanjut</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <span>Modul Praktik AWS Cloud - Fase 1 | Halaman 1 dari 3</span>
+            <button class="btn-print" onclick="window.print()">Cetak / Simpan PDF</button>
+        </div>
+    </div>
+
+</body>
+</html>
